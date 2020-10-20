@@ -1,0 +1,27 @@
+{
+  "url": "http://39.99.193.30/rpc",
+  "address": "5bYB1DSe18ad7oFiJSnt861ett8fT5GFSva3BBrdYvyU8SK6CJoyDrMyijZWiGmkT1ZDaQt2AMZr5yxu23n62YnQ",
+  "output": "log/monitor.log",
+  "pairs": [
+    {
+      "A": "USDT",
+      "B": "SERO",
+      "amountIn": 0.1
+    },
+    {
+      "A": "SERO",
+      "B": "SUSD",
+      "amountIn": 1
+    },
+    {
+      "A": "SEED",
+      "B": "SERO",
+      "amountIn": 1
+    },
+    {
+      "A": "CORAL",
+      "B": "SERO",
+      "amountIn": 1
+    }
+  ]
+}
