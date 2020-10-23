@@ -17,7 +17,7 @@ func init() {
 	app = &cli.App{
 		Name:    filepath.Base(os.Args[0]),
 		Usage:   "the Huashi coral monitor",
-		Version: "0.2.0",
+		Version: "0.2.1",
 	}
 
 	app.Commands = []*cli.Command{

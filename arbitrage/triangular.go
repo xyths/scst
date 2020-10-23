@@ -70,8 +70,8 @@ func (t *Triangular) Start(ctx context.Context) {
 }
 
 type Spread struct {
-	Chain  string
-	Spread float64
+	Chain  string  `json:"chain"`
+	Spread float64 `json:"spread"`
 }
 
 func (t *Triangular) doWork(ctx context.Context) {
