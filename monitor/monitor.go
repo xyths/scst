@@ -7,6 +7,7 @@ import (
 	"github.com/sero-cash/go-sero/common"
 	"github.com/sero-cash/go-sero/seroclient"
 	"github.com/shopspring/decimal"
+	"github.com/xyths/scst/common/config"
 	"github.com/xyths/scst/coral/swap"
 	"log"
 	"math/big"
@@ -14,24 +15,17 @@ import (
 )
 
 type Config struct {
-	Url     string // like "http://127.0.0.1:8545"
-	Address string
-	Pairs   []Pair
-	Output  string
-}
-type Pair struct {
-	A         string
-	B         string
-	AmountIn  float64 `json:"amountIn"`
-	AmountOut float64 `json:"amountOut,omitempty"`
+	Pairs  [][2]string
+	Coral  config.CoralConfig
+	Output string
 }
 
-func Monitor(ctx context.Context, config Config) error {
-	conn, err := seroclient.Dial(config.Url)
+func Monitor(ctx context.Context, coral config.CoralConfig, amounts map[string]float64, config Config) error {
+	conn, err := seroclient.Dial(config.Coral.Url)
 	if err != nil {
 		return err
 	}
-	addr := common.Base58ToAddress(config.Address)
+	addr := common.Base58ToAddress(config.Coral.Address)
 	ex, err := swap.NewSwapExchange(addr, conn)
 	if err != nil {
 		return err
@@ -41,12 +35,22 @@ func Monitor(ctx context.Context, config Config) error {
 		return err
 	}
 	defer f.Close()
-	for _, pair := range config.Pairs {
+	for _, tokens := range config.Pairs {
+		key := fmt.Sprintf("%s%s", tokens[0], tokens[1])
+		amountIn, ok := amounts[key]
+		if !ok {
+			amountIn = 1
+		}
+		pair := Pair{
+			A:        tokens[0],
+			B:        tokens[1],
+			AmountIn: amountIn,
+		}
 		if err := onePair(ex, &pair); err != nil {
-			log.Printf("%s-%s error: %s", pair.A, pair.B, err)
+			log.Printf("%s-%s error: %s", tokens[0], tokens[1], err)
 			continue
 		}
-		b2, err2 := json.Marshal(pair)
+		b2, err2 := json.Marshal(tokens)
 		if err2 != nil {
 			log.Print(err2)
 			continue
@@ -58,6 +62,13 @@ func Monitor(ctx context.Context, config Config) error {
 		}
 	}
 	return nil
+}
+
+type Pair struct {
+	A         string
+	B         string
+	AmountIn  float64
+	AmountOut float64
 }
 
 func onePair(ex *swap.SwapExchange, pair *Pair) error {

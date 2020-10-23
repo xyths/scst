@@ -17,14 +17,15 @@ func init() {
 	app = &cli.App{
 		Name:    filepath.Base(os.Args[0]),
 		Usage:   "the Huashi coral monitor",
-		Version: "0.1.0",
+		Version: "0.2.0",
 	}
 
 	app.Commands = []*cli.Command{
 		monitorCommand,
+		estimateCommand,
 	}
 	app.Flags = []cli.Flag{
-		utils.ConfigFlag,
+		utils.MonitorGlobalConfigFlag,
 	}
 }
 
